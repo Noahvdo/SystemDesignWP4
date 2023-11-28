@@ -35,7 +35,6 @@ parameters["w"] = [0.051, 0.4]
 parameters["e"] = [0.05, 0.1]
 # parameters.append["n_holes", 0, 4]
 
-print(parameters)
 
 multiple_flanges = True
 
@@ -131,10 +130,10 @@ def gen():
             f.write(f"Shear bear force: {highestFunctionOutput2} (N)\n")
 
 
-# beginTime = time.time()
-# gen()
-# endTime = time.time() - beginTime
-# print(f"Time it took: {round(endTime,2)} seconds.")
+beginTime = time.time()
+gen()
+endTime = time.time() - beginTime
+print(f"Time it took: {round(endTime,2)} seconds.")
 
 
 # def max_min(_min, _max, value):

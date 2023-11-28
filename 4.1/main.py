@@ -7,7 +7,10 @@ from determine_dimensions import (
 from determine_mass import calculate_mass
 import time
 
-parameters = {}
+
+import os
+
+user_input = os.environ.get("USER_INPUT", "n")
 
 # Load forces
 
@@ -18,6 +21,7 @@ loads = {"x": 0, "y": 0, "z": 0}
 moments = {"x": 0, "y": 0, "z": 0}
 
 # Parameters of the lug
+parameters = {}
 parameters["d1"] = [0.01, 0.12]
 # parameters.append["D2", 0, 4]
 # parameters.append["A2", 0, 4]
@@ -31,13 +35,20 @@ parameters["w"] = [0.051, 0.4]
 parameters["e"] = [0.05, 0.1]
 # parameters.append["n_holes", 0, 4]
 
+print(parameters)
 
-def max_min(_min, _max, value):
-    max(_min, min(_max, value))
+multiple_flanges = True
 
 
-F_z = 1219  # Newton
+F_z = 1220  # Newton
 F_y = 430  # Newton
+
+safety_factor = 1.2
+
+if multiple_flanges:
+    F_y /= 2
+    F_z /= 2
+
 
 angle_z = math.tanh(F_y / F_z)  # Radians
 
@@ -90,8 +101,8 @@ def gen():
         )
         if (
             mass != None
-            and result > 1.2 * (1220 / 2)
-            and result2 > 1.2 * (430 / 2)
+            and result > safety_factor * (F_z)
+            and result2 > safety_factor * (F_y)
             and mass < lowestMass
         ):
             highestFunctionOutput = result
@@ -108,9 +119,10 @@ def gen():
 
     print(f"Force: {highestFunctionOutput}")
     print(f"Shear bear force: {highestFunctionOutput2}")
-    save_params_input = input("Save these parameters? (y/n) ")
+    if user_input == None:
+        user_input = input("Save these parameters? (y/n) ")
 
-    if str(save_params_input) == "y":
+    if str(user_input) == "y":
         with open("4.3_results.txt", "w") as f:
             for key, value in highestParams.items():
                 f.write(f"{key}: {value}\n")
@@ -119,7 +131,11 @@ def gen():
             f.write(f"Shear bear force: {highestFunctionOutput2} (N)\n")
 
 
-beginTime = time.time()
-gen()
-endTime = time.time() - beginTime
-print(f"Time it took: {round(endTime,2)} seconds.")
+# beginTime = time.time()
+# gen()
+# endTime = time.time() - beginTime
+# print(f"Time it took: {round(endTime,2)} seconds.")
+
+
+# def max_min(_min, _max, value):
+#     max(_min, min(_max, value))

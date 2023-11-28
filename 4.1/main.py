@@ -7,11 +7,6 @@ from determine_dimensions import (
 from determine_mass import calculate_mass
 import time
 
-
-import os
-
-user_input = os.environ.get("USER_INPUT", "n")
-
 # Load forces
 
 loads = {"x": 0, "y": 0, "z": 0}
@@ -118,8 +113,8 @@ def gen():
 
     print(f"Force: {highestFunctionOutput}")
     print(f"Shear bear force: {highestFunctionOutput2}")
-    if user_input == None:
-        user_input = input("Save these parameters? (y/n) ")
+
+    user_input = input("Save these parameters? (y/n) ")
 
     if str(user_input) == "y":
         with open("4.3_results.txt", "w") as f:

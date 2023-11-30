@@ -52,12 +52,14 @@ p = {"magnitude": 0, "angle_z": angle_z}  # magnitude in N, angle in rad
 
 p["magnitude"] = math.sqrt(F_z**2 + F_y**2)
 
-steps = 30
+steps = 20
 
 
 for key, value in parameters.items():
     parameters[key].append(value[0])
 
+# "name", density (kg/m^3), tensile yield strength (MPa), ultimate tensile strength (MPa), yield bearing (MPa), ultimate bearing (MPa)
+material = [["AL6061",2700,276*10**6,310*10**6,386*10**6,607*10**6],["AL2024",2780,324*10**6,469*10**6,441*10**6,814*10**6]]
 
 def gen():
     highestFunctionOutput = 0
@@ -66,63 +68,66 @@ def gen():
     lowestMass = 99999999
 
     highestParams = {}
+    for lugmaterial in range(len(material)):
+        for k in range(steps ** len(parameters)):
+            loopedParameters = []
+            for i, (key, value) in enumerate(parameters.items()):
+                value[2] = value[0] + math.floor(k % (steps ** (i + 1)) / steps**i) * (
+                    value[1] - value[0]
+                ) / (steps - 1)
+            result = calculate_max_y_transverse(
+                parameters["d1"][2],
+                parameters["t1"][2],
+                parameters["w"][2],
+                parameters["e"][2],
+                material[lugmaterial][2]
+            )
 
-    for k in range(steps ** len(parameters)):
-        loopedParameters = []
-        for i, (key, value) in enumerate(parameters.items()):
-            value[2] = value[0] + math.floor(k % (steps ** (i + 1)) / steps**i) * (
-                value[1] - value[0]
-            ) / (steps - 1)
-        result = calculate_max_y_transverse(
-            parameters["d1"][2],
-            parameters["t1"][2],
-            parameters["w"][2],
-            parameters["e"][2],
-        )
+            mass = calculate_mass(
+                parameters["d1"][2],
+                parameters["t1"][2],
+                parameters["w"][2],
+                parameters["e"][2],
+                material[lugmaterial][1]
+            )
 
-        mass = calculate_mass(
-            parameters["d1"][2],
-            parameters["t1"][2],
-            parameters["w"][2],
-            parameters["e"][2],
-        )
+            result2 = calculate_shear_bearing_failure_axial(
+                parameters["d1"][2],
+                parameters["t1"][2],
+                parameters["w"][2],
+                parameters["e"][2],
+                material[lugmaterial][3]
+            )
+            if (
+                mass != None
+                and result > safety_factor * (F_z)
+                and result2 > safety_factor * (F_y)
+                and mass < lowestMass
+            ):
+                highestFunctionOutput = result
+                highestFunctionOutput2 = result2
 
-        result2 = calculate_shear_bearing_failure_axial(
-            parameters["d1"][2],
-            parameters["t1"][2],
-            parameters["w"][2],
-            parameters["e"][2],
-        )
-        if (
-            mass != None
-            and result > safety_factor * (F_z)
-            and result2 > safety_factor * (F_y)
-            and mass < lowestMass
-        ):
-            highestFunctionOutput = result
-            highestFunctionOutput2 = result2
+                lowestMass = mass
 
-            lowestMass = mass
+                for key, value in parameters.items():
+                    highestParams[key] = parameters[key][2]
+        for key, value in highestParams.items():
+            print(f"{key}: {value}")
 
-            for key, value in parameters.items():
-                highestParams[key] = parameters[key][2]
-    for key, value in highestParams.items():
-        print(f"{key}: {value}")
+        print(f"Mass: {lowestMass}")
 
-    print(f"Mass: {lowestMass}")
+        print(f"Force: {highestFunctionOutput}")
+        print(f"Shear bear force: {highestFunctionOutput2}")
 
-    print(f"Force: {highestFunctionOutput}")
-    print(f"Shear bear force: {highestFunctionOutput2}")
+        user_input = input("Save these parameters? (y/n) ")
 
-    user_input = input("Save these parameters? (y/n) ")
-
-    if str(user_input) == "y":
-        with open("4.3_results.txt", "w") as f:
-            for key, value in highestParams.items():
-                f.write(f"{key}: {value}\n")
-            f.write(f"Mass: {lowestMass} (kg)\n")
-            f.write(f"Force: {highestFunctionOutput} (N)\n")
-            f.write(f"Shear bear force: {highestFunctionOutput2} (N)\n")
+        if str(user_input) == "y":
+            with open("4.3_results.txt", "w") as f:
+                for key, value in highestParams.items():
+                    f.write(f"{key}: {value}\n")
+                f.write(f"Mass: {lowestMass} (kg)\n")
+                f.write(f"Force: {highestFunctionOutput} (N)\n")
+                f.write(f"Shear bear force: {highestFunctionOutput2} (N)\n")
 
 
 beginTime = time.time()

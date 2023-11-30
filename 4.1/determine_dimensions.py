@@ -1,7 +1,7 @@
 import math
 
 
-def calculate_max_y_transverse(d, t, w, e):
+def calculate_max_y_transverse(d, t, w, e, ultimate_yield):
     if w < d:
         return 0
 
@@ -43,11 +43,11 @@ def calculate_max_y_transverse(d, t, w, e):
         A_br = d_1 * t_1
         K_ty = calculate_K_ty_transverse(A_av / A_br)
 
-    P_max_transverse = (A_br * K_ty) * 110 * (10**6) * A_br
+    P_max_transverse = (A_br * K_ty) * ultimate_yield * A_br
     return P_max_transverse
 
 
-def calculate_shear_bearing_failure_axial(d, t, w, e):
+def calculate_shear_bearing_failure_axial(d, t, w, e, ultimate_tensile):
     F_y = 430  # N
     A_br = d * t  # m^2
 
@@ -83,6 +83,6 @@ def calculate_shear_bearing_failure_axial(d, t, w, e):
     K_bry = calculate_kbry(e / d, t / d)
 
     # Ultimate tensile strength (MPa) aluminum 6061
-    F_tu = 310 * (10**6)
-    P_bry = K_bry * A_br * F_tu * (w - d) * t
+    #F_tu = 310 * (10**6)
+    P_bry = K_bry * A_br * ultimate_tensile * (w - d) * t
     return P_bry

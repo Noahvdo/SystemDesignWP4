@@ -22,6 +22,3 @@ def max_bearing_stress(Pi,D2,t2):
     return magnitude(Pi)/(D2*t2)
 
 print(max_bearing_stress(Pi, D2 ,t2))
-
-
-

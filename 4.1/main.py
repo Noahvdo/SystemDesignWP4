@@ -6,18 +6,11 @@ from determine_dimensions import (
 )
 from determine_mass import calculate_mass
 import time
-
-# Load forces
-
-loads = {"x": 0, "y": 0, "z": 0}
-
-# Moment forces
-
-moments = {"x": 0, "y": 0, "z": 0}
+from d2_calculator import calculate_d2
 
 # Parameters of the lug
 min_max_parameters = {}
-min_max_parameters["d1"] = [0.01, 0.12]
+min_max_parameters["d1"] = [0.01, 0.15]
 # min_max_parameters.append["D2", 0, 4]
 # min_max_parameters.append["A2", 0, 4]
 # min_max_parameters.append(["A3", 0, 4])
@@ -26,8 +19,8 @@ min_max_parameters["t1"] = [0.0001, 0.05]
 # min_max_parameters.append["t2", 0, 4]
 # min_max_parameters.append["t3", 0, 4]
 # min_max_parameters.append["h", 0, 4]
-min_max_parameters["w"] = [0.051, 0.4]
-min_max_parameters["e"] = [0.05, 0.1]
+min_max_parameters["w"] = [0.183, 0.4]
+min_max_parameters["e"] = [0.02, 0.1]
 # min_max_parameters.append["n_holes", 0, 4]
 
 
@@ -96,18 +89,22 @@ def gen(parameters):
     highestParams = {}
     best_material = []
     t2_best = 0
+    d2_init = 2
+    d2_best = 0
 
     for key, value in parameters.items():
         parameters[key].append(value[0])
 
     for lugmaterial in range(len(material)):
         t2 = calculate_t2(material[lugmaterial][6])
+
         for k in range(steps ** len(parameters)):
             loopedParameters = []
             for i, (key, value) in enumerate(parameters.items()):
                 value[2] = value[0] + math.floor(
                     k % (steps ** (i + 1)) / steps**i
                 ) * (value[1] - value[0]) / (steps - 1)
+
             result = calculate_max_y_transverse(
                 parameters["d1"][2],
                 parameters["t1"][2],
@@ -140,7 +137,7 @@ def gen(parameters):
             ):
                 highestFunctionOutput = result
                 highestFunctionOutput2 = result2
-
+                d2_best = calculate_d2(parameters["w"][2], d2_init)
                 lowestMass = mass
                 best_material = material[lugmaterial]
                 for key, value in parameters.items():
@@ -152,25 +149,9 @@ def gen(parameters):
             "Shear bear force": highestFunctionOutput2,
             "Parameters": highestParams,
             "t2": t2_best,
+            "d2": d2_best,
             "Material": best_material[0],
         }
-        # for key, value in highestParams.items():
-        #     print(f"{key}: {value}")
-
-        # print(f"Mass: {lowestMass}")
-
-        # print(f"Force: {highestFunctionOutput}")
-        # print(f"Shear bear force: {highestFunctionOutput2}")
-
-        # user_input = input("Save these parameters? (y/n) ")
-
-        # if str(user_input) == "y":
-        #     with open("4.3_results.txt", "w") as f:
-        #         for key, value in highestParams.items():
-        #             f.write(f"{key}: {value}\n")
-        #         f.write(f"Mass: {lowestMass} (kg)\n")
-        #         f.write(f"Force: {highestFunctionOutput} (N)\n")
-        #         f.write(f"Shear bear force: {highestFunctionOutput2} (N)\n")
         return result
 
 
@@ -184,11 +165,13 @@ def handle_results(result):
     force = result["Force"]
     shear_bear_force = result["Shear bear force"]
     t2 = result["t2"]
+    d2 = result["d2"]
     material = result["Material"]
 
     for key, value in parameters.items():
         print(f"{key}: {value}")
     print(f"t2: {t2}")
+    print(f"d2: {d2}")
     print(f"Mass: {mass}")
 
     print(f"Force: {force}")
@@ -202,6 +185,7 @@ def handle_results(result):
             for key, value in parameters.items():
                 f.write(f"{key}: {value}\n")
             f.write(f"t2: {t2}\n")
+            f.write(f"d2: {d2}\n")
             f.write(f"Mass: {mass} (kg)\n")
             f.write(f"Force: {force} (N)\n")
             f.write(f"Shear bear force: {shear_bear_force} (N)\n")

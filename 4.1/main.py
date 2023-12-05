@@ -58,8 +58,8 @@ steps = 20
 for key, value in parameters.items():
     parameters[key].append(value[0])
 
-# "name", density (kg/m^3), tensile yield strength (MPa), ultimate tensile strength (MPa), yield bearing (MPa), ultimate bearing (MPa)
-material = [["AL6061",2700,276*10**6,310*10**6,386*10**6,607*10**6],["AL2024",2780,324*10**6,469*10**6,441*10**6,814*10**6]]
+# "name", density (kg/m^3), Young's Modulus (Pa), Shear's Modulus (Pa), tensile yield strength (Pa), ultimate tensile strength (Pa), yield bearing (Pa), ultimate bearing (Pa)
+material = [["AL6061",2700,68.9*10**9,26*10**9,276*10**6,310*10**6,386*10**6,607*10**6],["AL2024",2780,73.1*10**9,28*10**9,324*10**6,469*10**6,441*10**6,814*10**6],["304 stainless steel",8000,193*10**9,77*10**9,215*10**6,505*10**6,-,-]]
 
 def gen():
     highestFunctionOutput = 0

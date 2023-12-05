@@ -2,10 +2,10 @@ import numpy as np
 import math
 
 iterations = 9
-parameters = [["tb",0.00000001,0.2],["a",0.00000001,0.5],["tz",0.00000001,0.2],["y",0.00000001,0.45]]
+parameters = [["tb",0.00000001,0.2],["a",0.00000001,0.5],["tz",0.00000001,0.2]]
 
 F = 430.5609  #N
-dingy = 345*10**6  #Pa
+stressy = 345*10**6  #Pa
 D1 = 0.1
 problem = 1
 
@@ -49,7 +49,7 @@ for f in range(10):
         for i,par in enumerate(parameters):
             par[3] = par[1] + math.floor(k%iterations**(i+1)/iterations**i)*(par[2]-par[1])/(iterations-1)
 
-        if area(parameters[0][3],parameters[1][3],parameters[2][3]) < minarea and dingy > 1.2*force(parameters[0][3],givQ(parameters[0][3],parameters[1][3],parameters[2][3]),givI(parameters[0][3],parameters[1][3],parameters[2][3])):
+        if area(parameters[0][3],parameters[1][3],parameters[2][3]) < minarea and stressy > 1.2*force(parameters[0][3],givQ(parameters[0][3],parameters[1][3],parameters[2][3]),givI(parameters[0][3],parameters[1][3],parameters[2][3])):
             bestforce = 1.2*force(parameters[0][3] , givQ(parameters[0][3],parameters[1][3],parameters[2][3]) , givI(parameters[0][3],parameters[1][3],parameters[2][3]))
             minarea = area(parameters[0][3],parameters[1][3],parameters[2][3])
             bestk = k

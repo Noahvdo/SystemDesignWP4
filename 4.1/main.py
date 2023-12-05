@@ -171,7 +171,7 @@ def gen(parameters):
                 and result2 > safety_factor * (F_y)
                 and result3 < safety_factor * material[lugmaterial][6]
                 and mass < lowestMass
-                and parameters["d1"][2]/2 < parameters["e"][2]+0.001
+                and parameters["d1"][2]/2 < parameters["e"][2]+0.004
             ):
                 highestFunctionOutput = result
                 highestFunctionOutput2 = result2

@@ -67,7 +67,7 @@ def calculate_max_y_transverse(d, t, w, e, ultimate_yield):
         A_br = d_1 * t_1
         K_ty = calculate_K_ty_transverse(A_av / A_br)
 
-    P_max_transverse = (A_br * K_ty) * ultimate_yield * A_br
+    P_max_transverse = (A_br * K_ty) * ultimate_yield
     return P_max_transverse
 
 
@@ -284,5 +284,5 @@ def calculate_shear_bearing_failure_axial(d, t, w, e, ultimate_tensile):
 
     K_bry = calculate_kbry(e / d, t / d)
 
-    P_bry = K_bry * A_br * ultimate_tensile * (w - d) * t
+    P_bry = K_bry * A_br * ultimate_tensile #* (w - d) * t
     return P_bry

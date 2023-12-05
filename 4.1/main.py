@@ -11,12 +11,12 @@ from d2_calculator import calculate_d2
 
 # Parameters of the lug
 min_max_parameters = {}
-min_max_parameters["d1"] = [0.01, 0.15]
+min_max_parameters["d1"] = [0.1, 0.17]
 # min_max_parameters.append["D2", 0, 4]
 # min_max_parameters.append["A2", 0, 4]
 # min_max_parameters.append(["A3", 0, 4])
 # min_max_parameters.append["A5", 0, 4]
-min_max_parameters["t1"] = [0.01, 0.05]
+min_max_parameters["t1"] = [0.00001, 0.004]
 # min_max_parameters.append["t2", 0, 4]
 # min_max_parameters.append["t3", 0, 4]
 # min_max_parameters.append["h", 0, 4]
@@ -122,14 +122,14 @@ def gen(parameters):
     highestParams = {}
     best_material = []
     t2_best = 0
-    d2_init = 2
+    d2 = 0.02
     d2_best = 0
 
     for key, value in parameters.items():
         parameters[key].append(value[0])
 
     for lugmaterial in range(len(material)):
-        t2 = calculate_t2(material[lugmaterial][6])
+        t2 = calculate_t2(material[lugmaterial][4])
 
         for k in range(steps ** len(parameters)):
             loopedParameters = []
@@ -145,7 +145,7 @@ def gen(parameters):
                 parameters["e"][2],
                 material[lugmaterial][4],
             )
-            d2 = calculate_d2(parameters["w"][2], d2_init)
+            #d2 = calculate_d2(parameters["w"][2], d2_init)
 
             mass = calculate_mass(
                 parameters["d1"][2],
@@ -171,6 +171,7 @@ def gen(parameters):
                 and result2 > safety_factor * (F_y)
                 and result3 < safety_factor * material[lugmaterial][6]
                 and mass < lowestMass
+                and parameters["d1"][2]/2 < parameters["e"][2]+0.001
             ):
                 highestFunctionOutput = result
                 highestFunctionOutput2 = result2

@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from functions.determine_dimensions import (
+from functions.determine_loads import (
     calculate_max_y_transverse,
     calculate_shear_bearing_failure_axial,
     max_bearing_stress,
@@ -12,17 +12,9 @@ from functions.d2_calculator import calculate_d2
 # Parameters of the lug
 min_max_parameters = {}
 min_max_parameters["d1"] = [0.1, 0.17]
-# min_max_parameters.append["D2", 0, 4]
-# min_max_parameters.append["A2", 0, 4]
-# min_max_parameters.append(["A3", 0, 4])
-# min_max_parameters.append["A5", 0, 4]
 min_max_parameters["t1"] = [0.00001, 0.004]
-# min_max_parameters.append["t2", 0, 4]
-# min_max_parameters.append["t3", 0, 4]
-# min_max_parameters.append["h", 0, 4]
 min_max_parameters["w"] = [0.183, 0.4]
 min_max_parameters["e"] = [0.02, 0.1]
-# min_max_parameters.append["n_holes", 0, 4]
 
 
 multiple_flanges = True
@@ -36,15 +28,6 @@ safety_factor = 1.2
 if multiple_flanges:
     F_y /= 2
     F_z /= 2
-
-
-angle_z = math.tanh(F_y / F_z)  # Radians
-
-# Point force P
-# Angle_z is the angle with the z axis
-p = {"magnitude": 0, "angle_z": angle_z}  # magnitude in N, angle in rad
-
-p["magnitude"] = math.sqrt(F_z**2 + F_y**2)
 
 steps = 15
 
@@ -112,7 +95,7 @@ material = [
         807 * 10**6,
         1089 * 10**6,
     ],
-]  # ,["304 stainless steel",8000,193*10**9,77*10**9,215*10**6,505*10**6,-,-]]
+]
 
 
 def gen(parameters):
@@ -123,7 +106,6 @@ def gen(parameters):
     best_material = []
     t2_best = 0
     d2 = 0.02
-    d2_best = 0
 
     for key, value in parameters.items():
         parameters[key].append(value[0])
@@ -145,7 +127,6 @@ def gen(parameters):
                 parameters["e"][2],
                 material[lugmaterial][4],
             )
-            # d2 = calculate_d2(parameters["w"][2], d2_init)
 
             mass = calculate_mass(
                 parameters["d1"][2],
@@ -154,7 +135,6 @@ def gen(parameters):
                 parameters["e"][2],
                 material[lugmaterial][1],
                 t2,
-                d2,
             )
 
             result2 = calculate_shear_bearing_failure_axial(
@@ -181,14 +161,13 @@ def gen(parameters):
                 for key, value in parameters.items():
                     highestParams[key] = parameters[key][2]
                 t2_best = t2
-                d2_best = d2
         result = {
             "Mass": lowestMass,
             "Force": highestFunctionOutput,
             "Shear bear force": highestFunctionOutput2,
             "Parameters": highestParams,
             "t2": t2_best,
-            "d2": d2_best,
+            "d2": d2,
             "Material": best_material[0],
         }
         return result
@@ -256,7 +235,3 @@ for i in range(iteration_times):
         ]
 endTime = time.time() - beginTime
 print(f"Time it took: {round(endTime,2)} seconds.")
-
-
-# def max_min(_min, _max, value):
-#     max(_min, min(_max, value))

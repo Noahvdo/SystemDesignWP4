@@ -1,17 +1,12 @@
 import math
 
-# density = 2700  # aluminum 6061
-
 L1 = 0.2
-# L2 = 0.1
-# A = 0.05
 holes = 8
-# h = 0.12
 D2 = 0.02
 
 
-def calculate_mass(D1, t1, w, e, rho, t2, niks):
-    lug_width = (0.07543 + 1.5 * D2) * 2  # (h + 2 * t1 + 2 * L2)
+def calculate_mass(D1, t1, w, e, rho, t2):
+    lug_width = (0.07543 + 1.5 * D2) * 2
     density = rho
     A = e - 0.5 * D1
 

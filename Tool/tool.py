@@ -1,13 +1,13 @@
 import numpy as np
 import math
-from determine_dimensions import (
+from functions.determine_dimensions import (
     calculate_max_y_transverse,
     calculate_shear_bearing_failure_axial,
     max_bearing_stress,
 )
-from determine_mass import calculate_mass
+from functions.determine_mass import calculate_mass
 import time
-from d2_calculator import calculate_d2
+from functions.d2_calculator import calculate_d2
 
 # Parameters of the lug
 min_max_parameters = {}
@@ -145,7 +145,7 @@ def gen(parameters):
                 parameters["e"][2],
                 material[lugmaterial][4],
             )
-            #d2 = calculate_d2(parameters["w"][2], d2_init)
+            # d2 = calculate_d2(parameters["w"][2], d2_init)
 
             mass = calculate_mass(
                 parameters["d1"][2],
@@ -171,7 +171,7 @@ def gen(parameters):
                 and result2 > safety_factor * (F_y)
                 and result3 < safety_factor * material[lugmaterial][6]
                 and mass < lowestMass
-                and parameters["d1"][2]/2 < parameters["e"][2]+0.001
+                and parameters["d1"][2] / 2 < parameters["e"][2] + 0.001
             ):
                 highestFunctionOutput = result
                 highestFunctionOutput2 = result2
@@ -220,7 +220,7 @@ def handle_results(result):
     user_input = input("Save these parameters? (y/n) ")
 
     if str(user_input) == "y":
-        with open("results.txt", "w") as f:
+        with open("results/results.txt", "w") as f:
             for key, value in parameters.items():
                 f.write(f"{key}: {value}\n")
             f.write(f"t2: {t2}\n")

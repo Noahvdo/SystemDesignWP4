@@ -1,10 +1,10 @@
 Number of Fasteners: 8
-Coordinate Fastener 1:
-Coordinate Fastener 2:
-Coordinate Fastener 3:
-Coordinate Fastener 4:
-Coordinate Fastener 5:
-Coordinate Fastener 6:
-Coordinate Fastener 7:
-Coordinate Fastener 8:
-Diameter: 2 (cm)
+Coordinate Fastener 1: [-60, 75.4]
+Coordinate Fastener 2: [-20, 75.4]
+Coordinate Fastener 3:[20, 75.4] 
+Coordinate Fastener 4: [60, 75.4]
+Coordinate Fastener 5: [-60, -75.4]
+Coordinate Fastener 6: [-20,-75.4]
+Coordinate Fastener 7: [20, -75.4]
+Coordinate Fastener 8: [60, -75.4]
+Diameter: 2 [cm]

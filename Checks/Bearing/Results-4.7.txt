@@ -1,3 +1,5 @@
-D2 = 0.02
-t2 = 0.003
-Material Bearing Strength: 600000
+D2 = 0.02 
+t2 = 0.005 
+Fx= 26.91 
+Fz= 76.25 
+FMy= 276.58 

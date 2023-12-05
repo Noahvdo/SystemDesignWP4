@@ -3,6 +3,7 @@ import math
 from determine_dimensions import (
     calculate_max_y_transverse,
     calculate_shear_bearing_failure_axial,
+    max_bearing_stress,
 )
 from determine_mass import calculate_mass
 import time
@@ -59,27 +60,29 @@ def calculate_t2(shear_str):
     return max(t_axial, t_shear)
 
 
-# "name", density (kg/m^3), tensile yield strength (MPa), ultimate tensile strength (MPa), yield bearing strength (MPa), ultimate bearing strength (MPa), shear strength (MPa)
+# "name", density (kg/m^3), Young's Modulus (Pa), Shear's Modulus (Pa), tensile yield strength (Pa), ultimate tensile strength (Pa), yield bearing (Pa), ultimate bearing (Pa)
 material = [
     [
         "AL6061",
         2700,
+        68.9 * 10**9,
+        26 * 10**9,
         276 * 10**6,
         310 * 10**6,
         386 * 10**6,
         607 * 10**6,
-        207 * 10**6,
     ],
     [
         "AL2024",
         2780,
+        73.1 * 10**9,
+        28 * 10**9,
         324 * 10**6,
         469 * 10**6,
         441 * 10**6,
         814 * 10**6,
-        283 * 10**6,
     ],
-]
+]  # ,["304 stainless steel",8000,193*10**9,77*10**9,215*10**6,505*10**6,-,-]]
 
 
 def gen(parameters):
@@ -129,10 +132,13 @@ def gen(parameters):
                 parameters["e"][2],
                 material[lugmaterial][3],
             )
+
+            result3 = max_bearing_stress(0.02, t2)
             if (
                 mass != None
                 and result > safety_factor * (F_z)
                 and result2 > safety_factor * (F_y)
+                and result3 < safety_factor * material[lugmaterial][6]
                 and mass < lowestMass
             ):
                 highestFunctionOutput = result

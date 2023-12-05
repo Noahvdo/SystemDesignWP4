@@ -1,10 +1,16 @@
 import numpy as np
 import math
-Pi = np.array([[1,2,3],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]])
-with open("Checks\Bearing\Results-4.7.txt", 'r') as file:
+#Pi in x and z
+#myx= my*sin(a=38.5deg)
+with open("WP4\SystemDesignWP4\Checks\Bearing\Results-4.7.txt", 'r') as file:
     lines = file.readlines()
 D2 = float(lines[0].split()[-1])
 t2 = float(lines[1].split()[-1])
+Fx = float(lines[2].split()[-1])+float(lines[4].split()[-1])*math.sin(math.radians(38.5))
+Fy = float(lines[3].split()[-1])+float(lines[4].split()[-1])*math.cos(math.radians(38.5))
+
+Pi = np.array([Fx,Fy])
+
 
 def magnitude(v):
     sum_squared=0
@@ -13,12 +19,6 @@ def magnitude(v):
     return math.sqrt(sum_squared)
 
 def max_bearing_stress(Pi,D2,t2):
-    mags=[]
-    for i in Pi:
-        mags += [magnitude(i)]
-    P=max(mags)
-    return P/(D2*t2)
+    return magnitude(Pi)/(D2*t2)
 
-max_bearing_stress(Pi,D2,t2)
-
-
+print(max_bearing_stress(Pi, D2 ,t2))

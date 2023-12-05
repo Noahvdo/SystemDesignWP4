@@ -1,4 +1,31 @@
+import numpy as np
 import math
+
+
+
+#D2 = float(lines[0].split()[-1])
+#t2 = float(lines[1].split()[-1])
+#Fx = float(lines[2].split()[-1])+float(lines[4].split()[-1])*math.sin(math.radians(38.5))
+#Fy = float(lines[3].split()[-1])+float(lines[4].split()[-1])*math.cos(math.radians(38.5))
+
+
+
+def magnitude(v):
+    sum_squared=0
+    for i in v:
+        sum_squared+= i**2
+    return math.sqrt(sum_squared)
+
+def max_bearing_stress(D2,t2):
+    Fx = float(26.91)+float(276.58)*math.sin(math.radians(38.5))
+    Fy = float(76.25)+float(276.58)*math.cos(math.radians(38.5))
+    Pi = np.array([Fx,Fy])
+    return magnitude(Pi)/(D2*t2)
+
+#print(max_bearing_stress(Pi, D2 ,t2))
+
+
+
 
 
 def calculate_max_y_transverse(d, t, w, e, ultimate_yield):

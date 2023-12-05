@@ -66,9 +66,6 @@ def calculate_t2(shear_str):
     return max(t_axial, t_shear)
 
 
-for key, value in parameters.items():
-    parameters[key].append(value[0])
-
 # "name", density (kg/m^3), tensile yield strength (MPa), ultimate tensile strength (MPa), yield bearing strength (MPa), ultimate bearing strength (MPa), shear strength (MPa)
 material = [
     [
@@ -98,6 +95,7 @@ def gen(parameters):
     lowestMass = 99999999
     highestParams = {}
     best_material = []
+    t2_best = 0
 
     for key, value in parameters.items():
         parameters[key].append(value[0])
@@ -147,11 +145,13 @@ def gen(parameters):
                 best_material = material[lugmaterial]
                 for key, value in parameters.items():
                     highestParams[key] = parameters[key][2]
+                t2_best = t2
         result = {
             "Mass": lowestMass,
             "Force": highestFunctionOutput,
             "Shear bear force": highestFunctionOutput2,
             "Parameters": highestParams,
+            "t2": t2_best,
             "Material": best_material[0],
         }
         # for key, value in highestParams.items():
@@ -178,6 +178,36 @@ def max_min(_min, _max, value):
     return max(_min, min(_max, value))
 
 
+def handle_results(result):
+    parameters = result["Parameters"]
+    mass = result["Mass"]
+    force = result["Force"]
+    shear_bear_force = result["Shear bear force"]
+    t2 = result["t2"]
+    material = result["Material"]
+
+    for key, value in parameters.items():
+        print(f"{key}: {value}")
+    print(f"t2: {t2}")
+    print(f"Mass: {mass}")
+
+    print(f"Force: {force}")
+    print(f"Shear bear force: {shear_bear_force}")
+    print(f"Material: {material}")
+
+    user_input = input("Save these parameters? (y/n) ")
+
+    if str(user_input) == "y":
+        with open("results.txt", "w") as f:
+            for key, value in parameters.items():
+                f.write(f"{key}: {value}\n")
+            f.write(f"t2: {t2}\n")
+            f.write(f"Mass: {mass} (kg)\n")
+            f.write(f"Force: {force} (N)\n")
+            f.write(f"Shear bear force: {shear_bear_force} (N)\n")
+            f.write(f"Material: {material}")
+
+
 deltaChange = 1.2
 iteration_times = 7
 beginTime = time.time()
@@ -185,7 +215,7 @@ parameters = min_max_parameters
 for i in range(iteration_times):
     result = gen(parameters)
     if i == (iteration_times - 1):
-        print(result)
+        handle_results(result)
         break
     parameters = result["Parameters"]
     for key, value in parameters.items():
@@ -196,12 +226,6 @@ for i in range(iteration_times):
         value_minus_change = max_min(
             min_max_parameters[key][0], min_max_parameters[key][1], value / change
         )
-        if key == "d1":
-            print(key)
-            print(value_minus_change, value_plus_change, value)
-        # print(
-        #     f"{key} change in next gen: {change}. With highest previous value: {value}"
-        # )
         parameters[key] = [
             value_minus_change,
             value_plus_change,

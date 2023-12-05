@@ -7,10 +7,10 @@ L1 = 0.2
 # A = 0.05
 holes = 8
 # h = 0.12
-D2 = 0.02
+# D2 = 0.02
 
 
-def calculate_mass(D1, t1, w, e, rho, t2):
+def calculate_mass(D1, t1, w, e, rho, t2, D2):
     lug_width = (0.07543 + 1.5 * D2) * 2  # (h + 2 * t1 + 2 * L2)
     density = rho
     A = e - 0.5 * D1

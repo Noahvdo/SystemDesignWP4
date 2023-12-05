@@ -16,7 +16,7 @@ min_max_parameters["d1"] = [0.01, 0.15]
 # min_max_parameters.append["A2", 0, 4]
 # min_max_parameters.append(["A3", 0, 4])
 # min_max_parameters.append["A5", 0, 4]
-min_max_parameters["t1"] = [0.0001, 0.05]
+min_max_parameters["t1"] = [0.01, 0.05]
 # min_max_parameters.append["t2", 0, 4]
 # min_max_parameters.append["t3", 0, 4]
 # min_max_parameters.append["h", 0, 4]
@@ -92,7 +92,6 @@ material = [
         1480 * 10**6,
         1860 * 10**6,
     ],
-    
 ]  # ,["304 stainless steel",8000,193*10**9,77*10**9,215*10**6,505*10**6,-,-]]
 
 
@@ -124,8 +123,9 @@ def gen(parameters):
                 parameters["t1"][2],
                 parameters["w"][2],
                 parameters["e"][2],
-                material[lugmaterial][2],
+                material[lugmaterial][4],
             )
+            d2 = calculate_d2(parameters["w"][2], d2_init)
 
             mass = calculate_mass(
                 parameters["d1"][2],
@@ -134,6 +134,7 @@ def gen(parameters):
                 parameters["e"][2],
                 material[lugmaterial][1],
                 t2,
+                d2,
             )
 
             result2 = calculate_shear_bearing_failure_axial(
@@ -141,10 +142,9 @@ def gen(parameters):
                 parameters["t1"][2],
                 parameters["w"][2],
                 parameters["e"][2],
-                material[lugmaterial][3],
+                material[lugmaterial][5],
             )
-
-            result3 = max_bearing_stress(0.02, t2)
+            result3 = max_bearing_stress(d2, t2)
             if (
                 mass != None
                 and result > safety_factor * (F_z)
@@ -154,12 +154,13 @@ def gen(parameters):
             ):
                 highestFunctionOutput = result
                 highestFunctionOutput2 = result2
-                d2_best = calculate_d2(parameters["w"][2], d2_init)
+
                 lowestMass = mass
                 best_material = material[lugmaterial]
                 for key, value in parameters.items():
                     highestParams[key] = parameters[key][2]
                 t2_best = t2
+                d2_best = d2
         result = {
             "Mass": lowestMass,
             "Force": highestFunctionOutput,

@@ -55,13 +55,40 @@ p["magnitude"] = math.sqrt(F_z**2 + F_y**2)
 steps = 15
 
 
-# for key, value in parameters.items():
-#     parameters[key].append(value[0])
+def calculate_t2(shear_str):
+    t_axial = (26729.29 + (26729.29**2 + 4 * shear_str * 5024.5) ** 0.5) / (
+        2 * shear_str
+    )
+    t_shear = (
+        5166.7308 + (5166.73**2 + 4 * shear_str * 0.5 * 159.93) ** 0.5
+    ) / shear_str
 
-# "name", density (kg/m^3), tensile yield strength (MPa), ultimate tensile strength (MPa), yield bearing (MPa), ultimate bearing (MPa)
+    return max(t_axial, t_shear)
+
+
+for key, value in parameters.items():
+    parameters[key].append(value[0])
+
+# "name", density (kg/m^3), tensile yield strength (MPa), ultimate tensile strength (MPa), yield bearing strength (MPa), ultimate bearing strength (MPa), shear strength (MPa)
 material = [
-    ["AL6061", 2700, 276 * 10**6, 310 * 10**6, 386 * 10**6, 607 * 10**6],
-    ["AL2024", 2780, 324 * 10**6, 469 * 10**6, 441 * 10**6, 814 * 10**6],
+    [
+        "AL6061",
+        2700,
+        276 * 10**6,
+        310 * 10**6,
+        386 * 10**6,
+        607 * 10**6,
+        207 * 10**6,
+    ],
+    [
+        "AL2024",
+        2780,
+        324 * 10**6,
+        469 * 10**6,
+        441 * 10**6,
+        814 * 10**6,
+        283 * 10**6,
+    ],
 ]
 
 
@@ -75,7 +102,8 @@ def gen(parameters):
     for key, value in parameters.items():
         parameters[key].append(value[0])
 
-    for lug_material in range(len(material)):
+    for lugmaterial in range(len(material)):
+        t2 = calculate_t2(material[lugmaterial][6])
         for k in range(steps ** len(parameters)):
             loopedParameters = []
             for i, (key, value) in enumerate(parameters.items()):
@@ -87,7 +115,7 @@ def gen(parameters):
                 parameters["t1"][2],
                 parameters["w"][2],
                 parameters["e"][2],
-                material[lug_material][2],
+                material[lugmaterial][2],
             )
 
             mass = calculate_mass(
@@ -95,7 +123,8 @@ def gen(parameters):
                 parameters["t1"][2],
                 parameters["w"][2],
                 parameters["e"][2],
-                material[lug_material][1],
+                material[lugmaterial][1],
+                t2,
             )
 
             result2 = calculate_shear_bearing_failure_axial(
@@ -103,7 +132,7 @@ def gen(parameters):
                 parameters["t1"][2],
                 parameters["w"][2],
                 parameters["e"][2],
-                material[lug_material][3],
+                material[lugmaterial][3],
             )
             if (
                 mass != None
@@ -115,7 +144,7 @@ def gen(parameters):
                 highestFunctionOutput2 = result2
 
                 lowestMass = mass
-                best_material = material[lug_material]
+                best_material = material[lugmaterial]
                 for key, value in parameters.items():
                     highestParams[key] = parameters[key][2]
         result = {
@@ -180,3 +209,7 @@ for i in range(iteration_times):
         ]
 endTime = time.time() - beginTime
 print(f"Time it took: {round(endTime,2)} seconds.")
+
+
+# def max_min(_min, _max, value):
+#     max(_min, min(_max, value))

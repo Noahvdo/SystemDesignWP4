@@ -3,18 +3,17 @@ import math
 # density = 2700  # aluminum 6061
 
 L1 = 0.2
-L2 = 0.1
+# L2 = 0.1
 # A = 0.05
-holes = 0
-h = 0.0375
+holes = 8
+# h = 0.12
+D2 = 0.02
 
 
-def calculate_mass(D1, t1, w, e, rho):
-    lug_width = h + 2 * t1 + 2 * L2
+def calculate_mass(D1, t1, w, e, rho, t2):
+    lug_width = (0.07543 + 1.5 * D2) * 2  # (h + 2 * t1 + 2 * L2)
     density = rho
     A = e - 0.5 * D1
-    D2 = w / 5
-    t2 = t1
 
     flange_volume = (
         w * L1 + 0.5 * math.pi * (0.5 * D1 + A) ** 2 - math.pi * (0.5 * D1) ** 2

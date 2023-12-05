@@ -101,6 +101,7 @@ material = [
 def gen(parameters):
     highestFunctionOutput = 0
     highestFunctionOutput2 = 0
+    highestFunctionOutput3 = 0
     lowestMass = 99999999
     highestParams = {}
     best_material = []
@@ -155,7 +156,7 @@ def gen(parameters):
             ):
                 highestFunctionOutput = result
                 highestFunctionOutput2 = result2
-
+                highestFunctionOutput3 = result3
                 lowestMass = mass
                 best_material = material[lugmaterial]
                 for key, value in parameters.items():
@@ -165,6 +166,7 @@ def gen(parameters):
             "Mass": lowestMass,
             "Force": highestFunctionOutput,
             "Shear bear force": highestFunctionOutput2,
+            "Max bearing strength": highestFunctionOutput3,
             "Parameters": highestParams,
             "t2": t2_best,
             "d2": d2,
@@ -181,19 +183,25 @@ def handle_results(result):
     parameters = result["Parameters"]
     mass = result["Mass"]
     force = result["Force"]
+    force_safety_margin = force/F_z
     shear_bear_force = result["Shear bear force"]
+    shear_force_safety_margin = force/F_y
+    max_bearing_stress = result["Max bearing strength"]
     t2 = result["t2"]
     d2 = result["d2"]
     material = result["Material"]
 
+        \
+    
     for key, value in parameters.items():
         print(f"{key}: {value}")
     print(f"t2: {t2}")
     print(f"d2: {d2}")
     print(f"Mass: {mass}")
 
-    print(f"Force: {force}")
-    print(f"Shear bear force: {shear_bear_force}")
+    print(f"Transverse yield strength: {force}. Safety margin: {force_safety_margin}")
+    print(f"Shear bear force: {shear_bear_force}. Safety margin: {shear_force_safety_margin}")
+    print(f"Max bearing stress: {max_bearing_stress}")
     print(f"Material: {material}")
 
     user_input = input("Save these parameters? (y/n) ")
@@ -205,8 +213,9 @@ def handle_results(result):
             f.write(f"t2: {t2}\n")
             f.write(f"d2: {d2}\n")
             f.write(f"Mass: {mass} (kg)\n")
-            f.write(f"Force: {force} (N)\n")
-            f.write(f"Shear bear force: {shear_bear_force} (N)\n")
+            f.write(f"Transverse yield strength: {force} (N). Safety margin: {force_safety_margin}\n")
+            f.write(f"Shear bear force: {shear_bear_force} (N). Safety margin: {shear_force_safety_margin}\n")
+            f.write(f"Max bearing stress: {max_bearing_stress} (N)\n")
             f.write(f"Material: {material}")
 
 
